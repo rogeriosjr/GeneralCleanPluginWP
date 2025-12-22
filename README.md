@@ -1,178 +1,64 @@
-🧹 Faxina Geral
+# 🧹 Faxina Geral
 
-Faxina Geral é um plugin de manutenção avançada para WordPress que realiza limpeza segura e controlada de dados desnecessários, com suporte a simulação (Dry Run), níveis de limpeza, bloqueio contra execução simultânea e integração com WP-CLI.
+**Faxina Geral** é um plugin de manutenção avançada para WordPress que realiza limpeza segura e controlada de dados desnecessários, com suporte a **Dry Run (simulação)**, **níveis de limpeza**, **lock contra execução simultânea** e **integração com WP-CLI**.
 
-Ele foi pensado para administradores que querem controle total, zero risco e transparência antes de qualquer remoção definitiva.
+O plugin foi projetado para administradores que precisam de **controle**, **segurança** e **transparência**, sem depender de soluções mágicas ou perigosas.
 
-✨ Principais Funcionalidades
-🔍 Modo Dry Run (Simulação)
+---
 
-Nenhum dado é removido
+## ✨ Funcionalidades
 
-Mostra exatamente o que seria apagado
+### 🔍 Modo Dry Run (Simulação)
+- Nenhum dado é removido
+- Exibe exatamente **o que seria apagado**
+- Ideal para validação antes da execução real
 
-Ideal para validação antes da execução real
+> 💡 Recomenda-se sempre executar primeiro em Dry Run.
 
-💡 Recomendado usar sempre o Dry Run antes da limpeza definitiva.
+---
 
-🧼 Níveis de Faxina
+### 🧼 Níveis de Faxina
 
-Você escolhe o quanto o sistema será agressivo na limpeza:
+Escolha o nível de agressividade da limpeza:
 
-Leve
-Limpeza básica e segura (revisões antigas, transients expirados)
+- **Leve**
+  - Revisões antigas
+  - Transients expirados
+  - Limpeza básica e segura
 
-Normal
-Remove dados órfãos comuns (metadados inválidos, rascunhos antigos)
+- **Normal**
+  - Metadados órfãos
+  - Rascunhos antigos
+  - Dados não utilizados comuns
 
-Pesada
-Faxina completa (itens não utilizados, lixo acumulado por plugins antigos)
+- **Pesada**
+  - Faxina completa
+  - Resíduos de plugins antigos
+  - Dados acumulados sem uso
 
-Cada nível é projetado para evitar impactos no funcionamento do site.
+Cada nível foi pensado para minimizar riscos ao funcionamento do site.
 
-🔐 Lock Anti-Execução Simultânea
+---
 
-Evita que a limpeza seja executada ao mesmo tempo por:
+### 🔐 Lock Anti-Execução Simultânea
 
-Painel administrativo
+Evita que a faxina seja executada ao mesmo tempo por:
 
-WP-CLI
-
-Cron
+- Painel administrativo
+- WP-CLI
+- Cron
 
 Isso garante:
+- Integridade dos dados
+- Nenhuma exclusão concorrente
+- Segurança em produção
 
-Consistência dos dados
+---
 
-Nenhum conflito de exclusão
+### 🧰 Integração com WP-CLI
 
-Segurança em ambientes de produção
+Permite executar a faxina via terminal, ideal para automações e servidores.
 
-🧰 Integração com WP-CLI
-
-Permite executar a Faxina Geral via terminal, ideal para servidores, automações e DevOps.
-
-Exemplo:
-
+**Dry Run via CLI:**
+```bash
 wp faxina-geral run --level=normal --dry-run
-
-
-Ou execução real:
-
-wp faxina-geral run --level=pesada
-
-🛠 Interface no Painel Administrativo
-
-O plugin adiciona um submenu em:
-
-Ferramentas → Faxina Geral
-
-A interface mostra:
-
-Opções de nível de limpeza
-
-Status do Dry Run
-
-Relatório resumido da faxina
-
-Alertas de segurança
-
-🚀 Como Usar (Passo a Passo)
-1️⃣ Acesse o Plugin
-
-No painel do WordPress:
-
-Ferramentas → Faxina Geral
-
-2️⃣ Escolha o Nível de Faxina
-
-Selecione o nível desejado:
-
-Leve
-
-Normal
-
-Pesada
-
-3️⃣ Ative o Dry Run (Recomendado)
-
-Marque a opção Dry Run para simular a limpeza.
-
-👉 Nenhum dado será apagado.
-
-4️⃣ Execute
-
-Clique em Executar Faxina e analise o relatório.
-
-Se estiver tudo correto, desative o Dry Run e execute novamente.
-
-⚠️ Boas Práticas Importantes
-
-✅ Faça backup antes de rodar uma faxina pesada
-
-✅ Use Dry Run sempre que possível
-
-❌ Não execute múltiplas vezes seguidas sem necessidade
-
-❌ Evite rodar em horários de pico de acesso
-
-🔒 Segurança
-
-Apenas usuários com permissão de administrador podem executar
-
-Uso de nonce para evitar CSRF
-
-Lock interno impede execução concorrente
-
-Código segue padrões modernos (PSR-4, namespaces, separação de responsabilidades)
-
-🧠 Filosofia do Plugin
-
-O Faxina Geral segue três princípios:
-
-Nada acontece sem você saber
-
-Simular antes de apagar
-
-Manutenção é ferramenta, não rotina cega
-
-Ele não tenta ser mágico — ele é previsível, auditável e seguro.
-
-🧩 Compatibilidade
-
-WordPress 6.x ou superior
-
-PHP 8.1+
-
-Compatível com ambientes Docker, VPS e hospedagens tradicionais
-
-Totalmente funcional sem dependência de plugins terceiros
-
-📦 Instalação
-
-Faça upload da pasta do plugin em:
-
-wp-content/plugins/
-
-
-Ative o plugin no painel administrativo
-
-Acesse Ferramentas → Faxina Geral
-
-🧪 Ambiente de Produção
-
-Em ambientes críticos, recomenda-se:
-
-Usar WP-CLI
-
-Executar Dry Run
-
-Rodar fora do horário de pico
-
-📄 Licença
-
-Este plugin é distribuído sob a licença MIT.
-
-🧹 Faxina Geral
-
-“Limpar é fácil. Limpar com segurança é profissional.”
