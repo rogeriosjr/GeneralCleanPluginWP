@@ -1,0 +1,31 @@
+# ignore all files in root
+/*.*
+
+# npm e composer
+node_modules
+.cache
+/vendor
+/tests
+
+
+# ignore log files and databases
+.phpintel
+.htaccess
+.DS_Store
+*.log
+*.sql
+*.sqlite
+*.zip
+*.tgz
+*.gz
+*.tar
+*.tar.gz
+*.lock
+
+# files to keep
+!.gitignore
+!.github
+!README.md
+!composer.json
+!composer.lock
+
