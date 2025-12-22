@@ -58,6 +58,17 @@ class Page
                         Executar em modo <strong>Dry-Run</strong> (simulação)
                     </label>
                 </p>
+
+                <h3>🎚️ Nível de Faxina</h3>
+
+                <select name="faxina_level">
+                    <option value="leve">Leve (manutenção segura)</option>
+                    <option value="geral" selected>Geral (recomendado)</option>
+                    <option value="pos-guerra">
+                        Pós-Guerra (uso manual e consciente)
+                    </option>
+                </select>
+
                 <input type="hidden" name="action" value="faxina_geral_run">
                 <?php wp_nonce_field('faxina_geral_run'); ?>
 
@@ -77,6 +88,10 @@ class Page
 
                 <table class="widefat striped">
                     <tbody>
+                        <tr>
+                            <th>Nível</th>
+                            <td><?php echo esc_html($lastLog['level'] ?? '-'); ?></td>
+                        </tr>
                         <tr>
                             <th>Modo</th>
                             <td>
@@ -114,9 +129,10 @@ class Page
 
         check_admin_referer('faxina_geral_run');
 
+        $level = $_POST['faxina_level'] ?? 'geral';
         $dryRun = isset($_POST['dry_run']) && $_POST['dry_run'] === '1';
 
-        $result = Cleaner::run($dryRun);
+        $result = Cleaner::run($dryRun, $level);
         Logger::log($result);
 
         wp_redirect(admin_url('tools.php?page=faxina-geral'));

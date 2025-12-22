@@ -4,44 +4,31 @@ namespace CleanGeneral\Core;
 
 class Cleaner
 {
-    public static function run(bool $dryRun = false): array
-    {
+    public static function run(
+        bool $dryRun = true,
+        string $level = 'geral'
+    ): array {
         global $wpdb;
 
         $result = [
-            'mode' => $dryRun ? 'dry-run' : 'real',
+            'mode'  => $dryRun ? 'dry-run' : 'real',
+            'level' => $level,
         ];
 
-        // 🗑️ Lixeira
-        $result['trash_posts'] = self::execute(
+        // ===== LEVE =====
+        $result['trash_posts'] = self::exec(
             "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'trash'",
             "DELETE FROM {$wpdb->posts} WHERE post_status = 'trash'",
             $dryRun
         );
 
-        // 🧠 Revisões
-        $result['revisions'] = self::execute(
-            "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'revision'",
-            "DELETE FROM {$wpdb->posts} WHERE post_type = 'revision'",
-            $dryRun
-        );
-
-        // ✍️ Auto-drafts
-        $result['auto_drafts'] = self::execute(
-            "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'auto-draft'",
-            "DELETE FROM {$wpdb->posts} WHERE post_status = 'auto-draft'",
-            $dryRun
-        );
-
-        // 💬 Comentários lixo
-        $result['comments'] = self::execute(
+        $result['comments'] = self::exec(
             "SELECT COUNT(*) FROM {$wpdb->comments} WHERE comment_approved IN ('spam','trash')",
             "DELETE FROM {$wpdb->comments} WHERE comment_approved IN ('spam','trash')",
             $dryRun
         );
 
-        // ⏱️ Transients expirados
-        $result['transients'] = self::execute(
+        $result['expired_transients'] = self::exec(
             "SELECT COUNT(*) FROM {$wpdb->options}
              WHERE option_name LIKE '_transient_timeout_%'
              AND option_value < UNIX_TIMESTAMP()",
@@ -51,17 +38,42 @@ class Cleaner
             $dryRun
         );
 
+        // ===== GERAL =====
+        if (in_array($level, ['geral', 'pos-guerra'], true)) {
+
+            $result['revisions'] = self::exec(
+                "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'revision'",
+                "DELETE FROM {$wpdb->posts} WHERE post_type = 'revision'",
+                $dryRun
+            );
+
+            $result['auto_drafts'] = self::exec(
+                "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = 'auto-draft'",
+                "DELETE FROM {$wpdb->posts} WHERE post_status = 'auto-draft'",
+                $dryRun
+            );
+        }
+
+        // ===== PÓS-GUERRA =====
+        if ($level === 'pos-guerra') {
+
+            $result['all_transients'] = self::exec(
+                "SELECT COUNT(*) FROM {$wpdb->options}
+                 WHERE option_name LIKE '_transient_%'",
+                "DELETE FROM {$wpdb->options}
+                 WHERE option_name LIKE '_transient_%'",
+                $dryRun
+            );
+        }
+
         return $result;
     }
 
-    private static function execute(string $countSql, string $deleteSql, bool $dryRun): int
+    private static function exec(string $count, string $delete, bool $dryRun): int
     {
         global $wpdb;
-
-        if ($dryRun) {
-            return (int) $wpdb->get_var($countSql);
-        }
-
-        return (int) $wpdb->query($deleteSql);
+        return $dryRun
+            ? (int) $wpdb->get_var($count)
+            : (int) $wpdb->query($delete);
     }
 }
