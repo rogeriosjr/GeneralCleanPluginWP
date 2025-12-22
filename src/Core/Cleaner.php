@@ -2,6 +2,8 @@
 
 namespace CleanGeneral\Core;
 
+use CleanGeneral\Core\Lock;
+
 class Cleaner
 {
     public static function run(
@@ -9,6 +11,13 @@ class Cleaner
         string $level = 'geral'
     ): array {
         global $wpdb;
+
+        if (!Lock::acquire()) {
+            return [
+                'error' => 'locked',
+                'message' => 'Faxina Geral já está em execução.',
+            ];
+        }
 
         $result = [
             'mode'  => $dryRun ? 'dry-run' : 'real',
@@ -65,6 +74,8 @@ class Cleaner
                 $dryRun
             );
         }
+
+        Lock::release();
 
         return $result;
     }

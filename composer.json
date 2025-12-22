@@ -1,6 +1,7 @@
 {
-    "name": "junior/clean-general",
-    "description": "Plugin Wordpress for clean general",
+    "name": "cleangeneral/general-clean",
+    "description": "Protocolo de limpeza segura do WordPress",
+    "type": "wordpress-plugin",
     "autoload": {
         "psr-4": {
             "CleanGeneral\\": "src/"

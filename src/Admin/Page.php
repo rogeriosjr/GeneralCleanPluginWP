@@ -4,6 +4,7 @@ namespace CleanGeneral\Admin;
 
 use CleanGeneral\Core\Cleaner;
 use CleanGeneral\Core\Logger;
+use CleanGeneral\Core\Lock;
 
 defined('ABSPATH') || exit;
 
@@ -12,7 +13,7 @@ class Page
     public function __construct()
     {
         add_action('admin_menu', [$this, 'menu']);
-        add_action('admin_post_faxina_geral_run', [$this, 'handle']);
+        add_action('admin_post_general_clean_run', [$this, 'handle']);
     }
 
     public function menu(): void
@@ -22,7 +23,7 @@ class Page
             'Faxina Geral',
             'Faxina Geral',
             'manage_options',
-            'faxina-geral',
+            'general_clean',
             [$this, 'render']
         );
     }
@@ -31,6 +32,12 @@ class Page
     {
         if (!current_user_can('manage_options')) {
             return;
+        }
+
+        if (Lock::isLocked()) {
+            wp_die(
+                '⚠ A Faxina Geral já está em execução. Aguarde finalizar.'
+            );
         }
 
         $lastLog = get_option('faxina_geral_last_log');
@@ -51,6 +58,12 @@ class Page
                 <li>✔ Transients expirados</li>
             </ul>
 
+            <?php if (Lock::isLocked()): ?>
+                <div class="notice notice-warning">
+                    <p><strong>⚠ Faxina Geral em execução.</strong></p>
+                </div>
+            <?php endif; ?>
+
             <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
                 <p>
                     <label>
@@ -69,8 +82,8 @@ class Page
                     </option>
                 </select>
 
-                <input type="hidden" name="action" value="faxina_geral_run">
-                <?php wp_nonce_field('faxina_geral_run'); ?>
+                <input type="hidden" name="action" value="general_clean_run">
+                <?php wp_nonce_field('general_clean_run'); ?>
 
                 <p>
                     <input
@@ -127,7 +140,7 @@ class Page
             wp_die('Acesso negado');
         }
 
-        check_admin_referer('faxina_geral_run');
+        check_admin_referer('general_clean_run');
 
         $level = $_POST['faxina_level'] ?? 'geral';
         $dryRun = isset($_POST['dry_run']) && $_POST['dry_run'] === '1';
@@ -135,9 +148,7 @@ class Page
         $result = Cleaner::run($dryRun, $level);
         Logger::log($result);
 
-        wp_redirect(admin_url('tools.php?page=faxina-geral'));
+        wp_redirect(admin_url('tools.php?page=general_clean'));
         exit;
     }
 }
-
-new Page();

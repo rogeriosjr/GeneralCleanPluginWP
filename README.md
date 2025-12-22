@@ -176,3 +176,37 @@ Transients não expirados (flush)
 Cache conhecido (se existir)
 
 👉 Nunca automático. Só botão manual.
+
+🧠 Filosofia final do Faxina Geral
+Nível	Pode automatizar	Risco
+Leve	✅ Sim	Zero
+Geral	✅ Sim	Muito baixo
+Pós-Guerra	❌ Nunca	Controlado
+
+🧹 Faxina Geral — Integração WP-CLI
+🎯 O que o comando vai fazer
+
+Exemplo real de uso:
+
+wp clean run
+wp clean run --dry-run
+wp clean run --level=leve
+wp clean run --level=pos-guerra --dry-run
+wp clean run --level=geral --no-dry-run
+
+Defaults (opinião minha, e correta):
+
+level = geral
+
+dry-run = true
+
+👉 Execução destrutiva nunca por padrão.
+
+4️⃣ Comandos disponíveis (resumo rápido)
+wp clean run
+wp clean run --dry-run
+wp clean run --no-dry-run
+wp clean run --level=leve
+wp clean run --level=pos-guerra --dry-run
+
+🔒 Faxina Geral — Lock Anti-Execução Simultânea

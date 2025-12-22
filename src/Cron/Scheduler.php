@@ -4,18 +4,46 @@ namespace CleanGeneral\Cron;
 
 use CleanGeneral\Core\Cleaner;
 use CleanGeneral\Core\Logger;
+use CleanGeneral\Core\Lock;
 
-add_action('faxina_geral_run', function () {
-    $result = Cleaner::run();
-    Logger::log($result);
-});
+class Scheduler
+{
+    public function __construct()
+    {
+        add_action('general_clean_run', [$this, 'run']);
 
-register_activation_hook(__FILE__, function () {
-    if (!wp_next_scheduled('faxina_geral_run')) {
-        wp_schedule_event(time(), 'weekly', 'faxina_geral_run');
+        register_activation_hook(
+            dirname(__DIR__, 2) . '/general-clean.php',
+            [$this, 'activate']
+        );
+
+        register_deactivation_hook(
+            dirname(__DIR__, 2) . '/general-clean.php',
+            [$this, 'deactivate']
+        );
     }
-});
 
-register_deactivation_hook(__FILE__, function () {
-    wp_clear_scheduled_hook('faxina_geral_run');
-});
+    public function run(): void
+    {
+        if (!Lock::acquire()) {
+            return;
+        }
+
+        $result = Cleaner::run(false, 'geral');
+        Logger::log($result);
+
+        Lock::release();
+    }
+
+    public function activate(): void
+    {
+        if (!wp_next_scheduled('general_clean_run')) {
+            wp_schedule_event(time(), 'weekly', 'general_clean_run');
+        }
+    }
+
+    public function deactivate(): void
+    {
+        wp_clear_scheduled_hook('general_clean_run');
+    }
+}
