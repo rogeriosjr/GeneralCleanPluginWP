@@ -4,7 +4,6 @@
 # npm e composer
 node_modules
 .cache
-/vendor
 /tests
 
 
@@ -28,4 +27,5 @@ node_modules
 !README.md
 !composer.json
 !composer.lock
+!general-clean.php
 
